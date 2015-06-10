@@ -29,8 +29,6 @@ Now, use ddply to get the number of steps by day.  Of course, we'll have to use 
 ```{r}
 library(plyr)
 activitybyday <- ddply(activitydata,~date,summarise,tot=sum(steps,na.rm=TRUE))
-mean1 <- mean(activitybyday$tot)
-median1 <- median(activitybyday$tot)
 ```
 
 The following histogram shows the distribution of the number of steps taken in a day.
@@ -46,14 +44,27 @@ mean1 <- mean(activitybyday$tot)
 median1 <- median(activitybyday$tot)
 ```
 
-The mean number of steps taken per day is  `r mean1`.
-The median number of steps taken per day is  `r median1`.
+The mean number of steps taken per day is `r mean1`.
 
-
+The median number of steps taken per day is `r median1`.
 
 ## What is the average daily activity pattern?
 
+Again, we use ddply, this time to calculate the average number of steps in each interval. Then we can draw a plot to show how the activity varies, on average, throughout the day.
 
+```{r}
+activitybyinterval <- ddply(activitydata,~interval,summarise,average=mean(steps,na.rm=TRUE))
+plot(activitybyinterval$interval, activitybyinterval$average,type = "l", col="green", main="Average steps per interval",xlab="time of day", ylab="number of steps")
+```
+
+To find out the exact interval in which the participant is most active, sort the data frame by number of steps (highest to lowest), and then take the first column in the top row. 
+
+```{r}
+sorted <- activitybyinterval[with(activitybyinterval,order(-activitybyinterval[,"average"])),]
+mostactiveinterval <- sorted[1,1]
+```
+
+This tells us that the most busy interval, on average, was `r mostactiveinterval`.
 
 ## Imputing missing values
 
